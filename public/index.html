@@ -1,0 +1,151 @@
+<html>
+<head>
+  <title>Lets Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link href="/css/bootstrap.css" rel="stylesheet">
+  <link href="/css/custom.css" rel="stylesheet">
+  <link rel="icon" href="/images/chat_logo.png" type="image/x-icon"/>
+</head>
+
+<body>
+ <!--  nickname page  -->
+ <div id="nickPage" class="" align="center">
+   <img height="300" width="300" class="img-circle" src="/images/mickymouse.jpg"/>
+     <h3>Name your avatar</h3>
+   <p id="nickError"></p>
+   <div class="form-group">
+   <form id="nickForm" >
+     <input id="nickname" type="text" autofocus required 
+            placeholder="Your nickname" />
+     <input class="btn btn-success" type="submit" value="Submit"/>
+   </form>
+ </div>
+</div>
+
+<!-- chat page  -->
+<div id="chatPage" class="container">
+  <!-- Whiteboard -->
+    <div class="col-md-8  panel panel-primary">
+
+        <div class="panel-body">
+           <div id="contentWrap" >
+              <div id="chatWrap" style=" border-radius: 10px; padding: 10px 0px; 
+                  background: #F0E0B0;min-height: 400;max-height: 400;overflow-y: scroll;">
+                  <div id="chat"></div>
+              </div>
+           </div>
+        </div>
+        <div class="well ">
+          <div align="center" class="text-muted small">App by: Malik Jamal Khan
+          </div>
+       </div>
+    </div>
+
+    <!-- Currenty Online  -->
+    <div class="col-md-4 col-md-offset-0">
+      <div class="well text-muted small"> Online Users :
+        <div class="text-success small lead ">
+          <div  id="users"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat textarea  -->
+    <div class="col-md-4 col-md-offset-0">
+        <form id="message-box">
+          <div class="form-group">
+           <textarea required autofocus style="background-color:#ffffe6;border:double 5px orange;border-radius: 0.5em; font-size:14px; width:100%;margin-bottom:10px;" 
+              rows="2"  
+             id="message" placeholder="Write your message and press enter.."></textarea>
+             <code>@malik  Hello</code> <span style="font-size:14px;">to say Hello to Malik privately</span>
+          </div>
+       </form>
+     </div>
+
+
+</div> <!--div id="chatWindow" -->
+
+<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/bootstrap.js"></script>
+
+<script>
+    jQuery(function($){
+      var socket = io.connect();
+
+      var title='anonymous';
+
+      var chatOuter=$('#chatWrap');
+      var chatInner=$('#chat');
+
+      $('#nickPage').show();
+      $('#chatPage').hide(); 
+
+       $('#message').keydown(function(event) {
+          if (event.keyCode == 13) {
+               $('#message-box').submit()
+             }
+       });
+
+       $('#nickForm').submit(function(e){
+           e.preventDefault();
+           title = $('#nickname').val();
+           socket.emit('new user',  $('#nickname').val(),  function(data){
+                if(data){
+                  $('#nickPage').hide();
+                    document.title=title;
+                  $('#chatPage').show();
+                }else{
+                  $('#nickError').html("Sorry, that nickname is already taken , try something else");
+                }
+           });
+           $('#nickname').val('');
+       });
+
+       $('#message-box').submit(function(e){
+            e.preventDefault();
+            socket.emit('ClientMessage',    $('#message').val(),    function(data){
+              $('#chat').append("<p align='right' class='error'>"+data+"&nbsp;&nbsp;</p><br/>");
+            });
+            $('#message').val('');
+       });
+
+      socket.on('usernames',   function(data){
+            var html='<ul>';
+            for(i=0;i<data.length;i++){
+              html+='<li><span>'+data[i]+'</span></li>';
+            }
+            html=html+'</ul>';
+            $('#users').html(html);
+      });
+
+      socket.on('new message',function(data){
+         if(data.nick===title){
+           $('#chat').append("<p style='' align='right' class='msg'><b>"+data.nick+" : </b>"+data.msg+"&nbsp;&nbsp;</p>");
+         }else{
+           $('#chat').append("<p style='' align='left' class='msg'><b>&nbsp;&nbsp;&nbsp;"+data.nick+" : </b>"+data.msg+"</p>");
+         }
+         scrollCorrect();
+      });
+
+      socket.on('whisper', function(data){
+          $('#chat').append("<p align='left' class='whisper'><b>&nbsp;&nbsp;&nbsp;"+data.nick+" : </b>"+data.msg+"</p><br/>");
+
+       });
+
+       socket.on('private', function(data){
+           $('#chat').append("<p align='right' class='whisper'><b>"+title+"@"+data.nick+": </b>"+data.msg+"&nbsp;&nbsp;</p><br/>");
+
+      });
+
+
+      function scrollCorrect(){
+           chatOuter.scrollTop(chatInner.outerHeight());
+      }
+    });
+
+</script>
+
+</body>
+</html>
