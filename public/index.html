@@ -10,15 +10,14 @@
 
 <body>
  <!--  nickname page  -->
- <div id="nickPage" class="" align="center">
-   <img height="300" width="300" class="img-circle" src="/images/mickymouse.jpg"/>
-     <h3>Name your avatar</h3>
+ <div id="nickPage" class="loginBox" align="center">
+   <img height="200" width="200" class="img-circle" src="/images/chat.png"/>
+     <h5 style="color: #f5f5f5">Fill your Name and Start Chat </h5>
    <p id="nickError"></p>
    <div class="form-group">
    <form id="nickForm" >
-     <input id="nickname" type="text" autofocus required 
-            placeholder="Your nickname" />
-     <input class="btn btn-success" type="submit" value="Submit"/>
+     <input id="nickname" style="padding: 5px; border-radius:4px; border:1px solid #337ab7" type="text" autofocus required 
+            placeholder="Your nick name" /> <input class="btn btn-primary" type="submit" value="Go"/>
    </form>
  </div>
 </div>
@@ -28,10 +27,9 @@
   <!-- Whiteboard -->
     <div class="col-md-8  panel panel-primary">
 
-        <div class="panel-body">
+        <div class="panel-body" style="padding: 15px 0px;">
            <div id="contentWrap" >
-              <div id="chatWrap" style=" border-radius: 10px; padding: 10px 0px; 
-                  background: #F0E0B0;min-height: 400;max-height: 400;overflow-y: scroll;">
+              <div id="chatWrap" class="blueChatBox">
                   <div id="chat"></div>
               </div>
            </div>
@@ -122,9 +120,9 @@
 
       socket.on('new message',function(data){
          if(data.nick===title){
-           $('#chat').append("<p style='' align='right' class='msg'><b>"+data.nick+" : </b>"+data.msg+"&nbsp;&nbsp;</p>");
+           $('#chat').append("<p style='' align='right' class='msg'><span class='arrow_box'>"+data.nick+"</span>"+data.msg+"&nbsp;&nbsp;</p>");
          }else{
-           $('#chat').append("<p style='' align='left' class='msg'><b>&nbsp;&nbsp;&nbsp;"+data.nick+" : </b>"+data.msg+"</p>");
+           $('#chat').append("<p style='' align='left' class='msg'><span class='arrow_box'>"+data.nick+" </span>"+data.msg+"</p>");
          }
          scrollCorrect();
       });
