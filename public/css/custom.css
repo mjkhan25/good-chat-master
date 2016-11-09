@@ -8,13 +8,15 @@ background: transparent;
 }
     ul li {
   color: limegreen;
-         list-style-type: disc;
+  list-style-type: disc;
   margin-left: 2em;
+  font-size: 20px;
     }
 
 
 ul li span {
   color: black;
+  font-size: 12px;
 }
 
     #chatWindow{
