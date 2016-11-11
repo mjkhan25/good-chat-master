@@ -16,12 +16,10 @@ background: transparent;
 
 ul li span {
   color: black;
-  font-size: 12px;
+  font-size: 12 px;
 }
 
-    #chatWindow{
-        display:none;
-    }
+    #chatWindow{ display:none;}
 
  .whisper{
   /* color:	#0e492d;*/
@@ -30,9 +28,7 @@ ul li span {
    font-weight: normal;
  }
 
- .error{
-   color:#800000;
- }
+ .error{ color:#800000;}
 
 .blueChatBox{
   border-radius: 10px;
